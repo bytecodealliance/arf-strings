@@ -36,7 +36,7 @@ be possible to work with them.
 Encoding the string data twice, while somewhat inefficient, makes it possible to
 detect accidental modifications by ARF-unaware application code.
 
-Applications which are unaware of ARF string should behave correctly or fail
+Applications which are unaware of ARF strings should behave correctly or fail
 gracefully.
 
 One tricky case is C code which represents paths as NUL-terminated strings.
