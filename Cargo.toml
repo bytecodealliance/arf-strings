@@ -7,5 +7,6 @@ readme = "README.md"
 description = "Encoding and decoding for ARF strings"
 license = "Apache-2.0 WITH LLVM-exception"
 documentation = "https://docs.rs/arf-strings"
+repository = "https://github.com/bytecodealliance/arf-strings"
 
 [dependencies]
