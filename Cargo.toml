@@ -1,0 +1,11 @@
+[package]
+name = "arf-strings"
+version = "0.1.0"
+authors = ["Dan Gohman <sunfish@mozilla.com>"]
+edition = "2018"
+readme = "README.md"
+description = "Encoding and decoding for ARF strings"
+license = "Apache-2.0 WITH LLVM-exception"
+documentation = "https://docs.rs/arf-strings"
+
+[dependencies]
