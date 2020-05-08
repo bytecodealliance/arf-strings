@@ -37,8 +37,8 @@ impl<'str> WasiString<'str> {
                     unsafe { data.push_str(str::from_utf8_unchecked(valid)) }
                     data.push('\u{FFFD}');
 
-                    if let Some(invalid_sequence_length) = error.error_len() {
-                        input = &after_valid[invalid_sequence_length..]
+                    if let Some((_, remaining)) = after_valid.split_first() {
+                        input = remaining;
                     } else {
                         break;
                     }
@@ -57,12 +57,12 @@ impl<'str> WasiString<'str> {
                 }
                 Err(error) => {
                     let (valid, after_valid) = input.split_at(error.valid_up_to());
-                    unsafe { data.push_str(str::from_utf8_unchecked(valid)) }
-                    data.push('\0');
-                    data.push((after_valid[0] & 0x7f) as char);
 
-                    if error.error_len().is_some() {
-                        input = &after_valid[1..]
+                    unsafe { data.push_str(str::from_utf8_unchecked(valid)) }
+                    if let Some((byte, remaining)) = after_valid.split_first() {
+                        data.push('\0');
+                        data.push((byte & 0x7f) as char);
+                        input = remaining;
                     } else {
                         break;
                     }

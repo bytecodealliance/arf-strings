@@ -273,6 +273,9 @@ int main(void) {
     arf_cstr_arf(UTF8_REPLACEMENT "foo\xff" "bar\xfe" "end", buffer);
     assert(memcmp(buffer, ptr_len(UTF8_BOM UTF8_REPLACEMENT "foo�bar�end\0" UTF8_REPLACEMENT "foo\0\x7F" "bar\0\x7E" "end")) == 0);
 
+    arf_cstr_arf("\xe6\x96", buffer);
+    assert(memcmp(buffer, ptr_len(UTF8_BOM "��\0" "\0f" "\0\x16")) == 0);
+
     assert(arf_sizeof_arf_cstr(ptr_len(UTF8_BOM "�\0" "\0\x7F")) == 2);
     assert(arf_sizeof_arf_cstr(ptr_len(UTF8_BOM "foo�\0" "foo\0\x7F")) == 5);
     assert(arf_sizeof_arf_cstr(ptr_len(UTF8_BOM "foo�bar�\0" "foo\0\x7F" "bar\0\x7E")) == 9);

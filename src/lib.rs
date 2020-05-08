@@ -56,4 +56,13 @@ fn round_trip() {
         .as_cstr(),
         CStr::from_bytes_with_nul(b"\0").unwrap()
     );
+    assert_eq!(
+        PosixString::from_path_str(
+            WasiString::from_maybe_nonutf8_cstr(CStr::from_bytes_with_nul(b"\xe6\x96\0").unwrap())
+                .as_str()
+        )
+        .unwrap()
+        .as_cstr(),
+        CStr::from_bytes_with_nul(b"\xe6\x96\0").unwrap()
+    );
 }
