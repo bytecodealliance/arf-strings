@@ -1,0 +1,24 @@
+[package]
+name = "arf-strings-fuzz"
+version = "0.0.0"
+edition = "2018"
+publish = false
+
+[package.metadata]
+cargo-fuzz = true
+
+[dependencies]
+arf-strings = { path = ".." }
+libfuzzer-sys = "0.3.2"
+
+[[bin]]
+name = "wasi-posix"
+path = "fuzz_targets/wasi-posix.rs"
+test = false
+doc = false
+
+[[bin]]
+name = "posix-wasi"
+path = "fuzz_targets/posix-wasi.rs"
+test = false
+doc = false
