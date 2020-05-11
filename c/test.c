@@ -247,6 +247,7 @@ int main(void) {
     assert(arf_categorize_cstr(UTF8_REPLACEMENT, &len));
     assert(len == sizeof(UTF8_REPLACEMENT) - 1);
 
+    assert(arf_sizeof_cstr_arf("foo") == 10);
     assert(arf_sizeof_cstr_arf("\xff") == 9);
     assert(arf_sizeof_cstr_arf("foo\xff") == 15);
     assert(arf_sizeof_cstr_arf("foo\xff" "bar\xfe") == 26);
@@ -254,6 +255,9 @@ int main(void) {
     assert(arf_sizeof_cstr_arf(UTF8_REPLACEMENT) == 10);
 
     uint8_t buffer[1024];
+
+    arf_cstr_arf("foo", buffer);
+    assert(memcmp(buffer, ptr_len(UTF8_BOM "foo\0foo")) == 0);
 
     arf_cstr_arf("\xff", buffer);
     assert(memcmp(buffer, ptr_len(UTF8_BOM "�\0" "\0\x7F")) == 0);
