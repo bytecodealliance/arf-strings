@@ -1,15 +1,19 @@
-use std::{ffi, str};
+use std::{
+    ffi::{CStr, CString},
+    str,
+};
 
 /// A utility for converting from inside-world path-oriented strings, such
 /// as file and directory names, into NUL-terminated byte strings that can
 /// be passed to POSIX-like APIs. Input strings containing NUL bytes are
 /// interpreted as ARF strings.
-pub struct PosixString {
-    data: ffi::CString,
-}
+pub struct PosixString(CString);
 
 impl PosixString {
-    /// Construct a `PosixString` with data copied from the given byte slice.
+    /// Construct a `PosixString` from data in the given byte slice, which should
+    /// contain a valid UTF-8 string, which must either contain no NUL bytes,
+    /// or must be a valid ARF string.
+    ///
     /// If the data is not valid UTF-8, or if it contains NUL bytes and is not
     /// valid ARF, return an error.
     pub fn from_path_bytes(bytes: &[u8]) -> Result<Self, ()> {
@@ -17,11 +21,13 @@ impl PosixString {
         Self::from_path_str(s)
     }
 
-    /// Construct a `PosixString` with data copied from the given `&str`.
+    /// Construct a `PosixString` from data in the given `&str`, which must either
+    /// contain no NUL bytes, or must be a valid ARF string.
+    ///
     /// If the data contains NUL bytes and is not valid ARF, return an error.
     pub fn from_path_str(s: &str) -> Result<Self, ()> {
-        match ffi::CString::new(s) {
-            Ok(cstr) => Ok(Self { data: cstr }),
+        match CString::new(s) {
+            Ok(cstring) => Ok(Self(cstring)),
             Err(e) => Self::from_arf(s, e.nul_position()),
         }
     }
@@ -67,13 +73,17 @@ impl PosixString {
         }
 
         // Validation succeeded.
-        Ok(Self {
-            data: unsafe { ffi::CString::from_vec_unchecked(vec) },
-        })
+        Ok(Self(unsafe { CString::from_vec_unchecked(vec) }))
     }
 
-    pub fn as_cstr(&self) -> &ffi::CStr {
-        &self.data
+    /// Return a `&CStr` reference to the contained `CString`.
+    pub fn as_cstr(&self) -> &CStr {
+        &self.0
+    }
+
+    /// Consume this `PosixString` and return the contained `CString`.
+    pub fn into_cstring(self) -> CString {
+        self.0
     }
 }
 
