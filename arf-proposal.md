@@ -28,4 +28,4 @@ filesystem paths, as non-NUL-terminated valid [UTF-8] strings. fixme: reword
 
 [UTF-8]: https://en.wikipedia.org/wiki/UTF-8
 
-For a description of ARF strings, see [this page](https://github.com/bytecodealliance/arf-strings/blob/master/README.md).
+For a description of ARF strings, see [this page](https://github.com/bytecodealliance/arf-strings/blob/main/README.md).
