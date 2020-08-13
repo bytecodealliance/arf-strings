@@ -1,12 +1,15 @@
 [package]
 name = "arf-strings"
 version = "0.1.2"
-authors = ["Dan Gohman <sunfish@mozilla.com>"]
+authors = ["Dan Gohman <dev@sunfishcode.online>"]
 edition = "2018"
 readme = "README.md"
 description = "Encoding and decoding for ARF strings"
-license = "Apache-2.0 WITH LLVM-exception"
+license = "Apache-2.0 WITH LLVM-exception OR Apache-2.0 OR MIT"
 documentation = "https://docs.rs/arf-strings"
 repository = "https://github.com/bytecodealliance/arf-strings"
 
 [dependencies]
+
+[badges]
+maintenance = { status = "actively-developed" }
