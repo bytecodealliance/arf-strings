@@ -1,6 +1,4 @@
-use std::borrow::Cow;
-use std::ffi::CStr;
-use std::str;
+use std::{borrow::Cow, ffi::CStr, str};
 
 /// A UTF-8 string.
 ///
