@@ -3,6 +3,8 @@ use std::{
     str,
 };
 
+/// A NUL-terminated and not-necessarily-UTF-8 string.
+///
 /// A utility for converting from inside-world path-oriented strings, such
 /// as file and directory names, into NUL-terminated byte strings that can
 /// be passed to POSIX-like APIs. Input strings containing NUL bytes are

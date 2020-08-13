@@ -2,6 +2,8 @@ use std::borrow::Cow;
 use std::ffi::CStr;
 use std::str;
 
+/// A UTF-8 string.
+///
 /// A utility for converting from outside-world POSIX-oriented strings, such
 /// as command-line arguments and environment variables, into UTF-8 strings,
 /// using the ARF encoding technique to handle unencodable byte sequences.
