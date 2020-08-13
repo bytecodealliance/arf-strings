@@ -62,11 +62,11 @@ static const uint8_t *find_invalid_utf8(const uint8_t *ptr, size_t len) {
     return ptr;
 }
 
-bool arf_is_valid_cstr(const char *cstr) {
+bool arf_is_valid_c_str(const char *c_str) {
     // Check that the C-string is all valid UTF-8.
-    size_t cstr_len = strlen(cstr);
-    return find_invalid_utf8((const uint8_t *)cstr, cstr_len) ==
-           (const uint8_t *)cstr + cstr_len;
+    size_t c_str_len = strlen(c_str);
+    return find_invalid_utf8((const uint8_t *)c_str, c_str_len) ==
+           (const uint8_t *)c_str + c_str_len;
 }
 
 bool arf_has_arf_magic(const uint8_t *ptr, size_t len) {
@@ -137,24 +137,24 @@ bool arf_is_valid_arf(const uint8_t *ptr, size_t len) {
     return true;
 }
 
-/// Like `arf_sizeof_cstr_arf`, but has `strlen(cstr)` passed in so that it
+/// Like `arf_sizeof_c_str_arf`, but has `strlen(c_str)` passed in so that it
 /// doesn't need to be recomputed.
-static size_t arf_sizeof_cstr_arf_impl(const char *cstr, size_t cstr_len) {
+static size_t arf_sizeof_c_str_arf_impl(const char *c_str, size_t c_str_len) {
     // Start with the length of the fixed-length parts of an ARF string.
     size_t len = sizeof(utf8_bom) + 1;
 
     // Add the size of both the lossy portion and the NUL-escaped portion.
-    for (size_t i = 0; i != cstr_len; ) {
+    for (size_t i = 0; i != c_str_len; ) {
         const uint8_t *found =
-            find_invalid_utf8((const uint8_t *)cstr + i, cstr_len - i);
+            find_invalid_utf8((const uint8_t *)c_str + i, c_str_len - i);
 
         // Copy in valid UTF-8 bytes.
-        size_t valid_len = (size_t)(found - ((const uint8_t *)cstr + i));
+        size_t valid_len = (size_t)(found - ((const uint8_t *)c_str + i));
         if (__builtin_add_overflow(len, valid_len * 2, &len))
             return SIZE_MAX;
 
         i += valid_len;
-        if (i == cstr_len)
+        if (i == c_str_len)
             break;
 
         // Handle an invalid byte.
@@ -168,34 +168,34 @@ static size_t arf_sizeof_cstr_arf_impl(const char *cstr, size_t cstr_len) {
     return len;
 }
 
-bool arf_categorize_cstr(const char *cstr, size_t *restrict len) {
-    size_t cstr_len = strlen(cstr);
+bool arf_categorize_c_str(const char *c_str, size_t *restrict len) {
+    size_t c_str_len = strlen(c_str);
 
-    if (__builtin_expect(find_invalid_utf8((const uint8_t *)cstr, cstr_len) ==
-                         (const uint8_t *)cstr + cstr_len,
+    if (__builtin_expect(find_invalid_utf8((const uint8_t *)c_str, c_str_len) ==
+                         (const uint8_t *)c_str + c_str_len,
                          true))
     {
-        *len = cstr_len;
+        *len = c_str_len;
         return true;
     }
 
-    *len = arf_sizeof_cstr_arf_impl(cstr, cstr_len);
+    *len = arf_sizeof_c_str_arf_impl(c_str, c_str_len);
     return false;
 }
 
-size_t arf_sizeof_cstr_arf(const char *cstr) {
-    return arf_sizeof_cstr_arf_impl(cstr, strlen(cstr));
+size_t arf_sizeof_c_str_arf(const char *c_str) {
+    return arf_sizeof_c_str_arf_impl(c_str, strlen(c_str));
 }
 
-void arf_cstr_arf(const char *cstr, uint8_t *ptr) {
-    size_t cstr_len = strlen(cstr);
+void arf_c_str_arf(const char *c_str, uint8_t *ptr) {
+    size_t c_str_len = strlen(c_str);
 
     memcpy(ptr, utf8_bom, sizeof(utf8_bom));
     ptr += sizeof(utf8_bom);
 
     // Encode the replacement-encoded portion.
-    const uint8_t *in = (const uint8_t*)cstr;
-    for (size_t len = cstr_len; len != 0; ) {
+    const uint8_t *in = (const uint8_t*)c_str;
+    for (size_t len = c_str_len; len != 0; ) {
         const uint8_t *invalid = find_invalid_utf8(in, len);
 
         // Copy in valid UTF-8 bytes.
@@ -218,8 +218,8 @@ void arf_cstr_arf(const char *cstr, uint8_t *ptr) {
     *ptr++ = '\0';
 
     // Encode the full-encoded portion.
-    in = (const uint8_t*)cstr;
-    for (size_t len = cstr_len; len != 0; ) {
+    in = (const uint8_t*)c_str;
+    for (size_t len = c_str_len; len != 0; ) {
         const uint8_t *invalid = find_invalid_utf8(in, len);
 
         // Copy in valid UTF-8 bytes.
@@ -240,7 +240,7 @@ void arf_cstr_arf(const char *cstr, uint8_t *ptr) {
     }
 }
 
-size_t arf_sizeof_arf_cstr(const uint8_t *ptr, size_t len) {
+size_t arf_sizeof_arf_c_str(const uint8_t *ptr, size_t len) {
     assert(arf_is_valid_arf(ptr, len));
 
     const uint8_t *end = ptr + len;
@@ -249,20 +249,20 @@ size_t arf_sizeof_arf_cstr(const uint8_t *ptr, size_t len) {
     ptr += sizeof(utf8_bom);
     ptr += strlen((const char *)ptr) + 1;
 
-    size_t cstr_len = 0;
+    size_t c_str_len = 0;
     while (ptr != end) {
         if (*ptr++ == '\0')
             ptr++;
-        cstr_len += 1;
+        c_str_len += 1;
     }
 
     // Add one for the terminating NUL.
-    cstr_len += 1;
+    c_str_len += 1;
 
-    return cstr_len;
+    return c_str_len;
 }
 
-void arf_arf_cstr(const uint8_t *ptr, size_t len, char *__restrict__ cstr) {
+void arf_arf_c_str(const uint8_t *ptr, size_t len, char *__restrict__ c_str) {
     assert(arf_is_valid_arf(ptr, len));
 
     const uint8_t *end = ptr + len;
@@ -276,9 +276,9 @@ void arf_arf_cstr(const uint8_t *ptr, size_t len, char *__restrict__ cstr) {
         uint8_t b = *ptr++;
         if (b == '\0')
             b = *ptr++ | (uint8_t)INT8_MIN;
-        *cstr++ = (char)b;
+        *c_str++ = (char)b;
     }
 
     // Append the terminating NUL.
-    *cstr = '\0';
+    *c_str = '\0';
 }

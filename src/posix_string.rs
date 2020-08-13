@@ -29,7 +29,7 @@ impl PosixString {
     /// If the data contains NUL bytes and is not valid ARF, return an error.
     pub fn from_path_str(s: &str) -> Result<Self, ()> {
         match CString::new(s) {
-            Ok(cstring) => Ok(Self(cstring)),
+            Ok(c_string) => Ok(Self(c_string)),
             Err(e) => Self::from_arf(s, e.nul_position()),
         }
     }
@@ -79,12 +79,12 @@ impl PosixString {
     }
 
     /// Return a `&CStr` reference to the contained `CString`.
-    pub fn as_cstr(&self) -> &CStr {
+    pub fn as_c_str(&self) -> &CStr {
         &self.0
     }
 
     /// Consume this `PosixString` and return the contained `CString`.
-    pub fn into_cstring(self) -> CString {
+    pub fn into_c_string(self) -> CString {
         self.0
     }
 }
@@ -92,41 +92,41 @@ impl PosixString {
 #[test]
 fn utf8_inputs() {
     assert_eq!(
-        PosixString::from_path_str("").unwrap().as_cstr().to_bytes(),
+        PosixString::from_path_str("").unwrap().as_c_str().to_bytes(),
         b""
     );
     assert_eq!(
         PosixString::from_path_str("f")
             .unwrap()
-            .as_cstr()
+            .as_c_str()
             .to_bytes(),
         b"f"
     );
     assert_eq!(
         PosixString::from_path_str("foo")
             .unwrap()
-            .as_cstr()
+            .as_c_str()
             .to_bytes(),
         b"foo"
     );
     assert_eq!(
         PosixString::from_path_str("\u{fffd}")
             .unwrap()
-            .as_cstr()
+            .as_c_str()
             .to_bytes(),
         "\u{fffd}".as_bytes()
     );
     assert_eq!(
         PosixString::from_path_str("\u{fffd}foo")
             .unwrap()
-            .as_cstr()
+            .as_c_str()
             .to_bytes(),
         "\u{fffd}foo".as_bytes()
     );
     assert_eq!(
         PosixString::from_path_str("\u{feff}foo")
             .unwrap()
-            .as_cstr()
+            .as_c_str()
             .to_bytes(),
         "\u{feff}foo".as_bytes()
     );
@@ -137,14 +137,14 @@ fn arf_inputs() {
     assert_eq!(
         PosixString::from_path_str("\u{feff}hello\u{fffd}world\0hello\0\x05world")
             .unwrap()
-            .as_cstr()
+            .as_c_str()
             .to_bytes(),
         b"hello\x85world"
     );
     assert_eq!(
         PosixString::from_path_str("\u{feff}hello\u{fffd}\0hello\0\x05")
             .unwrap()
-            .as_cstr()
+            .as_c_str()
             .to_bytes(),
         b"hello\x85"
     );
