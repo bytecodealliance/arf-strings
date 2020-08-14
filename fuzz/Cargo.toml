@@ -12,13 +12,13 @@ arf-strings = { path = ".." }
 libfuzzer-sys = "0.3.2"
 
 [[bin]]
-name = "wasi-posix"
-path = "fuzz_targets/wasi-posix.rs"
+name = "host_to_str_to_host"
+path = "fuzz_targets/host_to_str_to_host.rs"
 test = false
 doc = false
 
 [[bin]]
-name = "posix-wasi"
-path = "fuzz_targets/posix-wasi.rs"
+name = "str_to_host_to_str"
+path = "fuzz_targets/str_to_host_to_str.rs"
 test = false
 doc = false

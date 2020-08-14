@@ -2,7 +2,7 @@
 
 ## Background
 
-POSIX doesn't provide a way to reliably determine the encoding for filenames, command-line arguments, and environment variables. 
+POSIX-ish platforms don't provide a way to reliably determine the encoding for filenames, command-line arguments, and environment variables. And on Windows, filenames, command-line arguments, and environment variables aren't guaranteed to be well-formed UTF-16.
 
 However, applications often need to know the encoding to correctly display, sort, compare, or serialize these names. POSIX provides a flock of environment variables, but for filenames, that assumes that the program is running with the same locale as the user which created the files, which isn't always true. There are also heuristics which can help guess at the encodings of filenames, however they're not reliable.
 
@@ -14,7 +14,7 @@ For WASI, rather than forever insisting that such applications are at fault, it'
 
 All WASI filenames, command-line arguments, and environment variables are valid UTF-8 strings, using the same definition as the [wasm core spec](https://webassembly.github.io/spec/core/binary/values.html#binary-utf8).
 
-When the host environment has strings, in particular filenames, which aren't UTF-8, implementations may do any of the following:
+When the host environment has strings, in particular filenames, which aren't a known and well-formed Unicode encoding, implementations may do any of the following:
 
  - Use the host locale environment variables to determine the encoding and transparently transcode the strings into UTF-8.
  - Return `EILSEQ` on calls which encounter invalid UTF-8 names.
@@ -23,8 +23,8 @@ When the host environment has strings, in particular filenames, which aren't UTF
 ## ARF strings
 
 ARF is the Alternative Representation for Filenames, an encoding for
-representing NUL-terminated strings of potentially non-UTF-8 data, as can occur within
-filesystem paths, as non-NUL-terminated valid [UTF-8] strings. fixme: reword
+representing NUL-terminated strings of potentially non-UTF-8 or ill-formed UTF-16 data, as can occur within
+filesystem paths, as non-NUL-terminated and valid [UTF-8] strings.
 
 [UTF-8]: https://en.wikipedia.org/wiki/UTF-8
 

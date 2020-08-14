@@ -3,10 +3,14 @@
 ARF is the Alternative Representation for Filenames, an encoding for
 representing NUL-terminated non-UTF-8 strings as valid (and non-NUL-terminated)
 [UTF-8] strings. It's intended for use in environments that need a way to
-represent [POSIX-compatible path names] within UTF-8 string types.
+represent [POSIX-compatible] and Windows-compatible path names within UTF-8
+string types.
+
+This is an experiment, and the Windows encoding scheme is particularly
+experimental.
 
 [UTF-8]: https://en.wikipedia.org/wiki/UTF-8
-[POSIX-compatible path names]: https://pubs.opengroup.org/onlinepubs/9699919799/basedefs/V1_chap03.html#tag_03_271
+[POSIX-compatible]: https://pubs.opengroup.org/onlinepubs/9699919799/basedefs/V1_chap03.html#tag_03_271
 
 ## Description
 
@@ -26,11 +30,14 @@ replacement character.
 
 The `NUL-escaped-portion` of an ARF string consists of the original string
 data (again, excluding the terminating NUL) with any unencodable bytes replaced
-by `U+0000` followed by the invalid byte with the most significant bit set to 0.
+by `U+0000` followed by:
+ - On POSIX-ish platforms, the invalid byte with the most significant bit set to 0.
+ - On Windows, a Unicode scalar value between `U+0` and `U+7FF`, representing
+   the offset in the surrogate codepoint space (`U+D800` through `U+DFFF`).
 
 ## Example
 
-The ARF encoding of `"foo\xffbar"` is `"\xef\xbb\xbffoo\xef\xbf\xbdbar\x00foo\x00\x7fbar":
+The ARF encoding of `"foo\xffbar"` on POSIX-ish platforms is `"\xef\xbb\xbffoo\xef\xbf\xbdbar\x00foo\x00\x7fbar":
  - `"\xef\xbb\xbf"` is the UTF-8 encoding of `U+FEFF`.
  - `"foo\xef\xbf\xbdbar"`is the string with the unencodable byte replaced by the UTF-8 encoding for `U+FFFD`.
  - `"\x00"` is the UTF-8 encoding for `U+0000`.

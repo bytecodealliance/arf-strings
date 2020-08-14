@@ -11,5 +11,8 @@ repository = "https://github.com/bytecodealliance/arf-strings"
 
 [dependencies]
 
+[target.'cfg(not(windows))'.dependencies]
+libc = "0.2.77" # for libc::EILSEQ
+
 [badges]
 maintenance = { status = "actively-developed" }
