@@ -26,19 +26,22 @@ pub fn str_to_host(s: &str) -> io::Result<OsString> {
 
 /// Convert an `&OsStr` produced by Windows-style APIs into a `Cow<str>` which
 /// is either plain UTF-8 or an ARF encoding.
-pub fn host_to_str(host: &OsStr) -> String {
+pub fn host_to_str(host: &OsStr) -> io::Result<String> {
     let wide = host.encode_wide().collect::<Vec<_>>();
-    if let Ok(s) = String::from_utf16(&wide) {
+    if wide.contains(&0) {
+        return Err(encoding_error());
+    }
+    Ok(if let Ok(s) = String::from_utf16(&wide) {
         s
     } else {
         to_arf(&wide)
-    }
+    })
 }
 
 /// Convert an `&OsStr` produced by Windows-style APIs into a `Cow<[u8]>` which
 /// is either plain UTF-8 or an ARF encoding.
-pub fn host_to_bytes(host: &OsStr) -> Vec<u8> {
-    host_to_str(host).into_bytes()
+pub fn host_to_bytes(host: &OsStr) -> io::Result<Vec<u8>> {
+    host_to_str(host).map(String::into_bytes)
 }
 
 /// Slow path for `str_to_host`.
@@ -60,7 +63,7 @@ fn from_arf(s: &str, nul: usize) -> io::Result<OsString> {
             }
             // Test for U+FFFD.
             let l = lossy.next().ok_or_else(encoding_error)?;
-            if l != std::char::from_u32(0xdfff - 0xd800).unwrap() {
+            if l != '\u{fffd}' {
                 return Err(encoding_error());
             }
             any_invalid = true;
@@ -130,6 +133,7 @@ fn utf16_inputs() {
         String::from_utf16(&str_to_host("").unwrap().encode_wide().collect::<Vec<_>>()).unwrap(),
         ""
     );
+    str_to_host("\0").unwrap_err();
     assert_eq!(
         String::from_utf16(&str_to_host("f").unwrap().encode_wide().collect::<Vec<_>>()).unwrap(),
         "f"
@@ -183,16 +187,17 @@ fn arf_inputs() {
             .unwrap()
             .encode_wide()
             .collect::<Vec<_>>(),
-        // FIXME: "hello\x85world"
-        [0 as u16]
+        [
+            'h' as u16, 'e' as u16, 'l' as u16, 'l' as u16, 'o' as u16, 0xd805_u16, 'w' as u16,
+            'o' as u16, 'r' as u16, 'l' as u16, 'd' as u16
+        ]
     );
     assert_eq!(
         str_to_host("\u{feff}hello\u{fffd}\0hello\0\x05")
             .unwrap()
             .encode_wide()
             .collect::<Vec<_>>(),
-        // FIXME: "hello\x85"
-        [0 as u16]
+        ['h' as u16, 'e' as u16, 'l' as u16, 'l' as u16, 'o' as u16, 0xd805_u16]
     );
 }
 
@@ -213,46 +218,45 @@ fn errors_from_str() {
 
 #[test]
 fn valid_utf16() {
-    assert_eq!(host_to_str(OsStr::new("")), "");
-    assert_eq!(host_to_str(OsStr::new("foo")), "foo");
+    assert_eq!(host_to_str(OsStr::new("")).unwrap(), "");
+    assert_eq!(host_to_str(OsStr::new("foo")).unwrap(), "foo");
 }
 
 #[test]
 fn not_utf16() {
     assert_eq!(
-        host_to_str(&OsString::from_wide(&[0xd800_u16])),
-        "\u{feff}\u{fffd}\0\0\u{7e}" // FIXME
+        host_to_str(&OsString::from_wide(&[0xd800_u16])).unwrap(),
+        "\u{feff}\u{fffd}\0\0\u{0}"
     );
     assert_eq!(
-        host_to_str(&OsString::from_wide(&[0xdfff_u16])),
-        "\u{feff}\u{fffd}\u{fffd}\0\0\u{40}\0\u{7f}" // FIXME
+        host_to_str(&OsString::from_wide(&[0xdfff_u16])).unwrap(),
+        "\u{feff}\u{fffd}\0\0\u{7ff}"
     );
 }
 
 #[test]
 fn round_trip() {
-    assert_eq!(host_to_str(&bytes_to_host(b"").unwrap()), "");
-    assert_eq!(host_to_str(&bytes_to_host(b"hello").unwrap()), "hello");
+    assert_eq!(host_to_str(&bytes_to_host(b"").unwrap()).unwrap(), "");
     assert_eq!(
-        str_to_host(&host_to_str(OsStr::new("hello"))).unwrap(),
+        host_to_str(&bytes_to_host(b"hello").unwrap()).unwrap(),
+        "hello"
+    );
+    assert_eq!(
+        str_to_host(&host_to_str(OsStr::new("hello")).unwrap()).unwrap(),
         OsStr::new("hello")
     );
     assert_eq!(
-        str_to_host(&host_to_str(&OsString::from_wide(&[
-            0x47_u16, 0xd800_u16, 0x48_u16
-        ])))
-        .unwrap(),
+        str_to_host(&host_to_str(&OsString::from_wide(&[0x47_u16, 0xd800_u16, 0x48_u16])).unwrap())
+            .unwrap(),
         OsString::from_wide(&[0x47_u16, 0xd800_u16, 0x48_u16])
     );
     assert_eq!(
-        str_to_host(&host_to_str(&OsString::from_wide(&[
-            0x49_u16, 0xdfff_u16, 0x50_u16
-        ])))
-        .unwrap(),
+        str_to_host(&host_to_str(&OsString::from_wide(&[0x49_u16, 0xdfff_u16, 0x50_u16])).unwrap())
+            .unwrap(),
         OsString::from_wide(&[0x49_u16, 0xdfff_u16, 0x50_u16])
     );
     assert_eq!(
-        str_to_host(&host_to_str(OsStr::new(""))).unwrap(),
+        str_to_host(&host_to_str(OsStr::new("")).unwrap()).unwrap(),
         OsStr::new("")
     );
 }
