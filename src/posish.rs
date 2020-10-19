@@ -264,6 +264,18 @@ fn not_utf8() {
         host_os_str_to_str(OsStr::from_bytes(b"\xef\xbb\xbf\xfd")).unwrap(),
         "\u{feff}\u{feff}\u{fffd}\0\u{feff}\0\x7d"
     );
+    assert_eq!(
+        host_os_str_to_str(OsStr::from_bytes(b"\xe2\x98")).unwrap(),
+        "\u{feff}\u{fffd}\u{fffd}\0\0\u{62}\0\u{18}"
+    );
+    assert_eq!(
+        host_os_str_to_str(OsStr::from_bytes(b"\xf0\x9f")).unwrap(),
+        "\u{feff}\u{fffd}\u{fffd}\0\0\u{70}\0\u{1f}"
+    );
+    assert_eq!(
+        host_os_str_to_str(OsStr::from_bytes(b"\xf0\x9f\x92")).unwrap(),
+        "\u{feff}\u{fffd}\u{fffd}\u{fffd}\0\0\u{70}\0\u{1f}\0\u{12}"
+    );
 
     // Same thing, now with `CStr`s.
     assert_eq!(
@@ -281,6 +293,18 @@ fn not_utf8() {
     assert_eq!(
         host_c_str_to_str(CStr::from_bytes_with_nul(b"\xef\xbb\xbf\xfd\0").unwrap()),
         "\u{feff}\u{feff}\u{fffd}\0\u{feff}\0\x7d"
+    );
+    assert_eq!(
+        host_c_str_to_str(CStr::from_bytes_with_nul(b"\xe2\x98\0").unwrap()),
+        "\u{feff}\u{fffd}\u{fffd}\0\0\u{62}\0\u{18}"
+    );
+    assert_eq!(
+        host_c_str_to_str(CStr::from_bytes_with_nul(b"\xf0\x9f\0").unwrap()),
+        "\u{feff}\u{fffd}\u{fffd}\0\0\u{70}\0\u{1f}"
+    );
+    assert_eq!(
+        host_c_str_to_str(CStr::from_bytes_with_nul(b"\xf0\x9f\x92\0").unwrap()),
+        "\u{feff}\u{fffd}\u{fffd}\u{fffd}\0\0\u{70}\0\u{1f}\0\u{12}"
     );
 }
 
