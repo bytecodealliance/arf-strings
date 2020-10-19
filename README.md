@@ -37,7 +37,7 @@ by `U+0000` followed by:
 
 ## Example
 
-The ARF encoding of `"foo\xffbar"` on POSIX-ish platforms is `"\xef\xbb\xbffoo\xef\xbf\xbdbar\x00foo\x00\x7fbar":
+The ARF encoding of `"foo\xffbar"` on POSIX-ish platforms is `"\xef\xbb\xbffoo\xef\xbf\xbdbar\x00foo\x00\x7fbar"`:
  - `"\xef\xbb\xbf"` is the UTF-8 encoding of `U+FEFF`.
  - `"foo\xef\xbf\xbdbar"`is the string with the unencodable byte replaced by the UTF-8 encoding for `U+FFFD`.
  - `"\x00"` is the UTF-8 encoding for `U+0000`.
