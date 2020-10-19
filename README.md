@@ -66,4 +66,4 @@ optionally with the help of the Rust and C libraries in this repository.
 Another tricky case is code which modifies paths. ARF-unaware code may modify ARF
 strings without being aware of the ARF encoding. Such code won't know to update the
 NUL-escaped portion of the ARF string, and the resulting ARF string will subsequently
-be detected as invalid, rather to errors rather than surprising behavior.
+be detected as invalid, leading to errors rather than surprising behavior.
