@@ -1,5 +1,10 @@
 # Non-Unicode filenames, command-line args, and environment variables
 
+## Status
+
+This document is not yet an official WASI proposal. It may be in the
+future, but for now it's just an experiment.
+
 ## Background
 
 POSIX-ish platforms don't provide a way to reliably determine the encoding for filenames, command-line arguments, and environment variables. And on Windows, filenames, command-line arguments, and environment variables aren't guaranteed to be well-formed UTF-16.
