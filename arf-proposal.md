@@ -9,7 +9,7 @@ future, but for now it's just an experiment.
 
 POSIX-ish platforms don't provide a way to reliably determine the encoding for filenames, command-line arguments, and environment variables. And on Windows, filenames, command-line arguments, and environment variables aren't guaranteed to be well-formed UTF-16.
 
-However, applications often need to know the encoding to correctly display, sort, compare, or serialize these names. POSIX provides a flock of environment variables, but for filenames, that assumes that the program is running with the same locale as the user which created the files, which isn't always true. There are also heuristics which can help guess at the encodings of filenames, however they're not reliable.
+However, applications often need to know the encoding to correctly display, compare, or serialize these names. POSIX provides a flock of environment variables, but for filenames, that assumes that the program is running with the same locale as the user which created the files, which isn't always true. There are also heuristics which can help guess at the encodings of filenames, however they're not reliable.
 
 There isn't a great reason for imposing the resulting complexity on applications, other than POSIX simply predating Unicode and UTF-8. In practice, many applications end up assuming that the inputs are UTF-8 anyway.
 
