@@ -19,11 +19,15 @@ For WASI, rather than forever insisting that such applications are at fault, it'
 
 All WASI filenames, command-line arguments, and environment variables are valid UTF-8 strings, using the same definition as the [wasm core spec](https://webassembly.github.io/spec/core/binary/values.html#binary-utf8).
 
-When the host environment has strings, in particular filenames, which aren't a known and well-formed Unicode encoding, implementations may do any of the following:
+When the host environment needs to pass in strings which aren't a known and well-formed Unicode encoding, implementations may do any of the following:
 
- - Use the host locale environment variables to determine the encoding and transparently transcode the strings into UTF-8.
- - Return `EILSEQ` on calls which encounter invalid UTF-8 names.
- - Translate between invalid UTF-8 strings and *ARF strings*.
+ - Use the host-specific mechanisms to determine the encoding and transparently transcode the strings into UTF-8,
+ - Fail with `EILSEQ`, or
+ - Translate strings into *ARF strings*.
+
+Similarly, when Wasm code passes a string into a WASI API which is an *ARF string*, implementations may either:
+ - Fail with `EILSEQ`, or
+ - Translate *ARF strings* into host-specific strings.
 
 ## ARF strings
 
