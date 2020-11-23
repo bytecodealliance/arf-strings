@@ -58,7 +58,7 @@ non-UTF-8 filenames. Typical application error messages will include the pathnam
 where the replacement characters will serve as a hint as to the nature of the problem.
 
 Consequently, by default, ARF-unaware C and POSIX code will not be able to open
-unencodable pathnames. For many applications, this limtation is worth the advantage
+unencodable pathnames. For many applications, this limitation is worth the advantage
 of being able to assume that all pathnames are UTF-8. Applications that wish to
 work with unencodable pathnames can opt in by being explicitly aware of ARF strings,
 optionally with the help of the Rust and C libraries in this repository.
