@@ -9,7 +9,7 @@ cargo-fuzz = true
 
 [dependencies]
 arf-strings = { path = ".." }
-libfuzzer-sys = "0.3.2"
+libfuzzer-sys = "0.3.4"
 
 [[bin]]
 name = "host_to_str_to_host"
