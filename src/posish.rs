@@ -122,7 +122,7 @@ fn to_arf(bytes: &[u8]) -> String {
     let mut input = bytes;
 
     // This loop and `unsafe` follow the example in the documentation:
-    // https://doc.rust-lang.org/stable/std/str/struct.Utf8Error.html#examples
+    // <https://doc.rust-lang.org/std/str/struct.Utf8Error.html#examples>
     loop {
         match std::str::from_utf8(input) {
             Ok(valid) => {
