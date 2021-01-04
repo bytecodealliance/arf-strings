@@ -98,7 +98,7 @@ fn to_arf(units: &[u16]) -> String {
 
     data.push('\u{feff}');
 
-    for unit in decode_utf16(units.iter().cloned()) {
+    for unit in decode_utf16(units.iter().copied()) {
         match unit {
             Ok(c) => data.push(c),
             Err(_) => data.push('\u{fffd}'),
@@ -107,7 +107,7 @@ fn to_arf(units: &[u16]) -> String {
 
     data.push('\0');
 
-    for unit in decode_utf16(units.iter().cloned()) {
+    for unit in decode_utf16(units.iter().copied()) {
         match unit {
             Ok(c) => data.push(c),
             Err(e) => {
