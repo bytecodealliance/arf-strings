@@ -1,7 +1,7 @@
 #[cfg(not(windows))]
 mod posish;
 #[cfg(windows)]
-mod winx;
+mod windows;
 
 #[cfg(not(windows))]
 pub use posish::{
@@ -9,4 +9,4 @@ pub use posish::{
     host_os_str_to_str, str_to_host,
 };
 #[cfg(windows)]
-pub use winx::{bytes_to_host, host_to_bytes, host_to_str, str_to_host};
+pub use windows::{bytes_to_host, host_to_bytes, host_to_str, str_to_host};
