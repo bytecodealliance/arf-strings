@@ -7,6 +7,7 @@ description = "Encoding and decoding for ARF strings"
 license = "Apache-2.0 WITH LLVM-exception OR Apache-2.0 OR MIT"
 documentation = "https://docs.rs/arf-strings"
 repository = "https://github.com/bytecodealliance/arf-strings"
+exclude = ["/.github"]
 
 [dependencies]
 
