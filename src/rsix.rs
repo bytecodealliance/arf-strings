@@ -174,7 +174,7 @@ fn to_arf(bytes: &[u8]) -> String {
 
 #[cold]
 fn encoding_error() -> io::Error {
-    io::Error::from_raw_os_error(libc::EILSEQ)
+    ::rsix::io::Error::ILSEQ.into()
 }
 
 #[test]

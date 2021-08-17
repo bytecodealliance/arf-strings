@@ -1,10 +1,10 @@
 #[cfg(not(windows))]
-mod posish;
+mod rsix;
 #[cfg(windows)]
 mod windows;
 
 #[cfg(not(windows))]
-pub use posish::{
+pub use crate::rsix::{
     bytes_to_host, host_c_str_to_bytes, host_c_str_to_str, host_os_str_to_bytes,
     host_os_str_to_str, str_to_host,
 };
