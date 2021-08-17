@@ -6,7 +6,8 @@ extern crate arf_strings;
 use arf_strings::{host_os_str_to_str, str_to_host};
 #[cfg(not(windows))]
 use std::ffi::CStr;
-use std::{ffi::OsStr, str};
+use std::ffi::OsStr;
+use std::str;
 
 fuzz_target!(|data: &[u8]| {
     if let Ok(s) = str::from_utf8(data) {

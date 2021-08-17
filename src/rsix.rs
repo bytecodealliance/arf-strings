@@ -1,12 +1,10 @@
+use std::borrow::Cow;
+use std::ffi::{CStr, CString, OsStr};
 #[cfg(unix)]
 use std::os::unix::ffi::OsStrExt;
 #[cfg(target_os = "wasi")]
 use std::os::wasi::ffi::OsStrExt;
-use std::{
-    borrow::Cow,
-    ffi::{CStr, CString, OsStr},
-    io, str,
-};
+use std::{io, str};
 
 /// Convert a byte sequence which is either plain UTF-8 or an ARF encoding into
 /// a `CString` ready for use in POSIX-style APIs.

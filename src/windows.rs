@@ -1,11 +1,8 @@
-use std::{
-    char::decode_utf16,
-    convert::TryFrom,
-    ffi::{OsStr, OsString},
-    io,
-    os::windows::ffi::{OsStrExt, OsStringExt},
-    str,
-};
+use std::char::decode_utf16;
+use std::convert::TryFrom;
+use std::ffi::{OsStr, OsString};
+use std::os::windows::ffi::{OsStrExt, OsStringExt};
+use std::{io, str};
 
 /// Convert a byte sequence which is either plain UTF-8 or an ARF encoding into
 /// a `OsString` ready for use in Windows-style APIs.
