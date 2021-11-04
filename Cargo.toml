@@ -2,7 +2,7 @@
 name = "arf-strings"
 version = "0.5.3-alpha.0"
 authors = ["Dan Gohman <dev@sunfishcode.online>"]
-edition = "2018"
+edition = "2021"
 description = "Encoding and decoding for ARF strings"
 license = "Apache-2.0 WITH LLVM-exception OR Apache-2.0 OR MIT"
 documentation = "https://docs.rs/arf-strings"
