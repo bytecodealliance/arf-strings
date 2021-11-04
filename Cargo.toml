@@ -9,10 +9,5 @@ documentation = "https://docs.rs/arf-strings"
 repository = "https://github.com/bytecodealliance/arf-strings"
 exclude = ["/.github"]
 
-[dependencies]
-
 [target.'cfg(not(windows))'.dependencies]
 rustix = "0.26.0"
-
-[badges]
-maintenance = { status = "actively-developed" }
