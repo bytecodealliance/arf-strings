@@ -1,4 +1,5 @@
 use std::char::decode_utf16;
+use std::convert::TryFrom;
 use std::ffi::{OsStr, OsString};
 use std::os::windows::ffi::{OsStrExt, OsStringExt};
 use std::{io, str};

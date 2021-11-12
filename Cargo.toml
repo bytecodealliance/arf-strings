@@ -2,7 +2,7 @@
 name = "arf-strings"
 version = "0.6.1-alpha.0"
 authors = ["Dan Gohman <dev@sunfishcode.online>"]
-edition = "2021"
+edition = "2018"
 description = "Encoding and decoding for ARF strings"
 license = "Apache-2.0 WITH LLVM-exception OR Apache-2.0 OR MIT"
 documentation = "https://docs.rs/arf-strings"
@@ -10,4 +10,4 @@ repository = "https://github.com/bytecodealliance/arf-strings"
 exclude = ["/.github"]
 
 [target.'cfg(not(windows))'.dependencies]
-rustix = "0.26.0"
+rustix = "0.26.2"
