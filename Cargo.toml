@@ -10,4 +10,4 @@ repository = "https://github.com/bytecodealliance/arf-strings"
 exclude = ["/.github"]
 
 [target.'cfg(not(windows))'.dependencies]
-rustix = "0.34.0"
+rustix = "0.35.6"

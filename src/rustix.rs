@@ -172,7 +172,7 @@ fn to_arf(bytes: &[u8]) -> String {
 
 #[cold]
 fn encoding_error() -> io::Error {
-    ::rustix::io::Error::ILSEQ.into()
+    ::rustix::io::Errno::ILSEQ.into()
 }
 
 #[test]
