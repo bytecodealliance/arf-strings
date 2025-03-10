@@ -1,6 +1,6 @@
 [package]
 name = "arf-strings"
-version = "0.7.2"
+version = "0.7.3"
 authors = ["Dan Gohman <dev@sunfishcode.online>"]
 edition = "2021"
 description = "Encoding and decoding for ARF strings"
